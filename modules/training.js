@@ -1,13 +1,19 @@
-import { mockNews } from "../data/mock-news.js";
+import { getDailyPlan } from "./daily-card.js";
 import { readStats, writeStats } from "./storage.js";
 
-const dailyItem = mockNews[new Date().getDate() % mockNews.length];
-
 export function initTraining() {
-  document.querySelector("#practiceMaterial").textContent =
-    `${dailyItem.title}：${dailyItem.summary}`;
+  renderPractice();
   document.querySelector("#saveAnswer").addEventListener("click", saveAnswer);
   document.querySelector("#showReference").addEventListener("click", showReference);
+  window.addEventListener("gongkao:modechange", renderPractice);
+  window.addEventListener("gongkao:newschange", renderPractice);
+}
+
+function renderPractice() {
+  const { news, question } = getDailyPlan();
+  document.querySelector("#practiceMaterial").textContent = `${news.title}：${news.summary}`;
+  document.querySelector('label[for="answerInput"]').textContent = `${question}（200 字以内）`;
+  document.querySelector("#referenceAnswer").hidden = true;
 }
 
 function saveAnswer() {
@@ -19,11 +25,13 @@ function saveAnswer() {
   }
 
   const stats = readStats();
+  const { news, mode } = getDailyPlan();
   stats.answers = [
     ...stats.answers,
     {
       date: new Date().toISOString(),
-      question: dailyItem.title,
+      mode: mode.name,
+      question: news.title,
       answer: value,
     },
   ];
@@ -32,7 +40,8 @@ function saveAnswer() {
 }
 
 function showReference() {
+  const { news } = getDailyPlan();
   const answer = document.querySelector("#referenceAnswer");
   answer.hidden = false;
-  answer.textContent = `参考思路：可从“问题导向、技术赋能、制度协同、群众获得感”四个层面展开。${dailyItem.angle}不是单纯提升效率，更重要的是让公共服务更精准、更公平、更可持续。`;
+  answer.textContent = `参考思路：可从“问题导向、资源配置、制度协同、服务对象获得感”四个层面展开。${news.angle}不是单纯提升效率，更重要的是让公共服务更精准、更公平、更可持续。`;
 }

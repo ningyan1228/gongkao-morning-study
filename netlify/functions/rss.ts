@@ -1,3 +1,10 @@
+const defaultSources = [
+  { name: "新华网时政", url: "https://www.news.cn/politics/index.html" },
+  { name: "人民网观点", url: "https://opinion.people.com.cn/" },
+  { name: "光明网理论", url: "https://theory.gmw.cn/" },
+  { name: "中国政府网要闻", url: "https://www.gov.cn/yaowen/" },
+];
+
 const allowedHosts = new Set([
   "www.news.cn",
   "news.cn",
@@ -26,42 +33,55 @@ const sourceNames: Record<string, string> = {
 
 export default async (request: Request) => {
   const requestUrl = new URL(request.url);
-  const target = requestUrl.searchParams.get("url") ?? "https://www.news.cn/politics/index.html";
+  const target = requestUrl.searchParams.get("url");
+  const limit = Math.min(Number(requestUrl.searchParams.get("limit") || 10), 20);
 
-  let pageUrl: URL;
-  try {
-    pageUrl = new URL(target);
-  } catch {
-    return json({ error: "Invalid url" }, 400);
-  }
+  const sources = target ? [{ name: "自定义来源", url: target }] : defaultSources;
+  const settled = await Promise.allSettled(sources.map((source) => fetchSource(source)));
+  const allItems = settled
+    .flatMap((result) => (result.status === "fulfilled" ? result.value : []))
+    .filter(Boolean);
 
-  if (!allowedHosts.has(pageUrl.hostname)) {
-    return json({ error: "News host is not allowed" }, 403);
-  }
+  const unique = dedupeItems(allItems).slice(0, limit);
 
-  const response = await fetch(pageUrl, {
-    headers: {
-      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      "user-agent": "gongkao-morning-study/1.0",
+  return json(
+    {
+      items: unique,
+      fetchedAt: new Date().toISOString(),
+      sourceCount: sources.length,
     },
-  });
-
-  if (!response.ok) {
-    return json({ error: `Source request failed: ${response.status}` }, 502);
-  }
-
-  const html = await response.text();
-  const items = extractNewsItems(html, pageUrl, sourceNames[pageUrl.hostname] ?? pageUrl.hostname);
-
-  return json({ items, source: pageUrl.hostname, fetchedAt: new Date().toISOString() }, 200, {
-    "cache-control": "public, max-age=900",
-  });
+    200,
+    { "cache-control": "public, max-age=900" },
+  );
 };
 
 export const config = {
   path: "/api/rss",
   method: ["GET"],
 };
+
+async function fetchSource(source: { name: string; url: string }) {
+  let pageUrl: URL;
+  try {
+    pageUrl = new URL(source.url);
+  } catch {
+    return [];
+  }
+
+  if (!allowedHosts.has(pageUrl.hostname)) return [];
+
+  const response = await fetch(pageUrl, {
+    headers: {
+      accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "user-agent": "gongkao-morning-study/1.0",
+    },
+  });
+
+  if (!response.ok) return [];
+
+  const html = await response.text();
+  return extractNewsItems(html, pageUrl, source.name || sourceNames[pageUrl.hostname] || pageUrl.hostname);
+}
 
 function extractNewsItems(html: string, pageUrl: URL, source: string) {
   const seen = new Set<string>();
@@ -98,6 +118,18 @@ function extractNewsItems(html: string, pageUrl: URL, source: string) {
   return items;
 }
 
+function dedupeItems(items: Array<{ id: string; title: string; summary: string; source: string; url: string }>) {
+  const seen = new Set<string>();
+  const unique = [];
+  for (const item of items) {
+    const key = item.title.replace(/\s/g, "");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(item);
+  }
+  return unique;
+}
+
 function cleanText(value: string) {
   return value
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -112,9 +144,9 @@ function cleanText(value: string) {
 }
 
 function isUsefulTitle(title: string) {
-  if (title.length < 8 || title.length > 42) return false;
+  if (title.length < 8 || title.length > 44) return false;
   if (!/[\u4e00-\u9fa5]/.test(title)) return false;
-  if (/首页|客户端|手机版|English|网站|关于|搜索|举报|专题|更多|视频|图片|直播/.test(title)) return false;
+  if (/首页|客户端|手机版|English|网站|关于|搜索|举报|专题|更多|视频|图片|直播|广告|登录|注册|版权|地方频道/.test(title)) return false;
   return true;
 }
 

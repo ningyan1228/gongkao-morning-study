@@ -15,18 +15,11 @@
       <aside class="rail" aria-label="功能导航">
         <a class="brand-mark" href="#top" aria-label="回到首页">早</a>
         <nav class="rail-nav">
-          <a href="#focus" title="专注计时" aria-label="专注计时">
-            <span aria-hidden="true">⏱</span>
-          </a>
-          <a href="#news" title="今日热点" aria-label="今日热点">
-            <span aria-hidden="true">闻</span>
-          </a>
-          <a href="#library" title="素材库" aria-label="素材库">
-            <span aria-hidden="true">库</span>
-          </a>
-          <a href="#practice" title="每日一题" aria-label="每日一题">
-            <span aria-hidden="true">练</span>
-          </a>
+          <a href="#daily" title="早读卡" aria-label="早读卡"><span aria-hidden="true">卡</span></a>
+          <a href="#focus" title="专注计时" aria-label="专注计时"><span aria-hidden="true">时</span></a>
+          <a href="#news" title="今日热点" aria-label="今日热点"><span aria-hidden="true">闻</span></a>
+          <a href="#library" title="素材库" aria-label="素材库"><span aria-hidden="true">库</span></a>
+          <a href="#practice" title="每日一题" aria-label="每日一题"><span aria-hidden="true">练</span></a>
         </nav>
       </aside>
 
@@ -38,6 +31,7 @@
             <p class="lede">
               用一杯咖啡的时间，把热点、金句、申论题和学习节奏收进同一个早晨。
             </p>
+            <div class="mode-switch" id="modeButtons" aria-label="选择备考模式"></div>
             <div class="quick-stats" aria-label="学习概览">
               <div>
                 <span id="streakCount">0</span>
@@ -56,6 +50,25 @@
           <figure class="masthead-visual">
             <img src="./assets/morning-study.png" alt="晨读书桌与申论学习资料" />
           </figure>
+        </section>
+
+        <section class="panel morning-card" id="daily">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker">Morning Card</p>
+              <h2>今日早读卡</h2>
+            </div>
+            <div class="action-row">
+              <button type="button" id="saveDailyMaterial">入库</button>
+              <button class="primary" type="button" id="shareDailyCard">生成打卡图</button>
+            </div>
+          </div>
+          <div class="daily-card-grid" id="dailyCard"></div>
+          <div class="study-flow" id="studyFlow" aria-label="早自习流程"></div>
+          <div class="share-preview" id="sharePreview" hidden>
+            <img id="shareImage" alt="早自习打卡图" />
+            <a id="downloadShare" download="gongkao-morning-checkin.png">下载打卡图</a>
+          </div>
         </section>
 
         <section class="dashboard-grid" aria-label="早自习工作台">
@@ -130,6 +143,7 @@
               </div>
             </div>
             <div class="topic-grid" id="topicGrid"></div>
+            <div class="archive-list" id="archiveList"></div>
           </article>
 
           <article class="panel" id="practice">
@@ -158,6 +172,11 @@
             <div>
               <p class="panel-kicker">Growth</p>
               <h2>个人成长</h2>
+            </div>
+            <div class="backup-actions">
+              <button type="button" id="exportData">导出数据</button>
+              <label class="import-button" for="importData">导入数据</label>
+              <input id="importData" type="file" accept="application/json" />
             </div>
           </div>
           <div class="growth-grid">

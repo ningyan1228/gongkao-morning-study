@@ -528,3 +528,141 @@ textarea:focus {
     font-size: 18px;
   }
 }
+
+/* Product upgrade: zero-cost daily study workflow */
+a {
+  color: var(--green);
+}
+
+.mode-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mode-switch button,
+.backup-actions button,
+.import-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.mode-switch button.is-active {
+  border-color: var(--green);
+  background: var(--green-2);
+  color: var(--green);
+  font-weight: 800;
+}
+
+.morning-card {
+  margin-bottom: 18px;
+}
+
+.daily-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.daily-card-grid article,
+.archive-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfd;
+  padding: 16px;
+}
+
+.daily-card-grid p,
+.daily-card-grid li,
+.archive-card p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.daily-card-grid ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+.study-flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.flow-step {
+  height: auto;
+  min-height: 92px;
+  padding: 12px;
+  text-align: left;
+}
+
+.flow-step strong,
+.flow-step span {
+  display: block;
+}
+
+.flow-step span {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.flow-step.is-done {
+  border-color: var(--green);
+  background: var(--green-2);
+}
+
+.share-preview {
+  display: grid;
+  gap: 12px;
+  max-width: 360px;
+  margin-top: 16px;
+}
+
+.share-preview img {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.share-preview[hidden] {
+  display: none;
+}
+
+.archive-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#importData {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 920px) {
+  .daily-card-grid,
+  .study-flow {
+    grid-template-columns: 1fr;
+  }
+}
