@@ -2,7 +2,7 @@ import { mockNews } from "../data/mock-news.js";
 import { sources } from "../data/sources.js";
 import { readStats, writeStats } from "./storage.js";
 
-const PROXY_BASE = "/api/rss";
+const PROXY_BASE = "https://gongkao-morning-study-zhiwu-20260626.netlify.app/api/rss";
 
 export async function initNews() {
   renderSources();
