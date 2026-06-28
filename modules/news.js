@@ -2,7 +2,7 @@ import { mockNews } from "../data/mock-news.js";
 import { sources } from "../data/sources.js";
 import { readStats, writeStats } from "./storage.js";
 
-const PROXY_BASE = "https://gongkao-morning-study-zhiwu-20260626.netlify.app/api/rss";
+const PROXY_BASE = "https://zaozixi-api.gjsx.uno";
 let liveNewsItems = [];
 
 export async function initNews() {
@@ -26,7 +26,7 @@ async function loadNews() {
 }
 
 async function fetchLiveNews() {
-  const response = await fetch(`${PROXY_BASE}?limit=8`);
+  const response = await fetch(`${PROXY_BASE}/api/rss?limit=8`);
   if (!response.ok) throw new Error("News proxy failed");
   const payload = await response.json();
   return payload.items.map((item, index) => enrichNews(item, index));

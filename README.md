@@ -60,7 +60,7 @@ python -m http.server 8080
 前端已经在 `modules/news.js` 中设置为你的 Netlify 函数地址：
 
 ```js
-const PROXY_BASE = "https://gongkao-morning-study-zhiwu-20260626.netlify.app/api/rss";
+const PROXY_BASE = "https://zaozixi-api.gjsx.uno";
 ```
 
 如果你换了 Netlify 站点，只需要改这一行。
@@ -68,3 +68,44 @@ const PROXY_BASE = "https://gongkao-morning-study-zhiwu-20260626.netlify.app/api
 ## 不要上传
 
 不要上传 `.netlify/` 目录，它只是本地部署缓存，已经写进 `.gitignore`。
+## 腾讯云代理部署
+
+代理项目在：
+
+```text
+server/zaozixi-proxy/
+```
+
+上传到服务器后建议放到：
+
+```text
+~/projects/zaozixi-proxy
+```
+
+启动：
+
+```bash
+cd ~/projects/zaozixi-proxy
+docker compose up -d --build
+```
+
+测试：
+
+```bash
+curl https://zaozixi-api.gjsx.uno/health
+curl "https://zaozixi-api.gjsx.uno/api/rss?limit=5"
+```
+
+停止：
+
+```bash
+cd ~/projects/zaozixi-proxy
+docker compose down
+```
+
+日志：
+
+```bash
+cd ~/projects/zaozixi-proxy
+docker compose logs -f
+```

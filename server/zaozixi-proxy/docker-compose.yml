@@ -1,0 +1,20 @@
+services:
+  zaozixi-proxy:
+    build: .
+    container_name: zaozixi-proxy
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      CACHE_TTL_SECONDS: "900"
+      VIRTUAL_HOST: zaozixi-api.gjsx.uno
+      LETSENCRYPT_HOST: zaozixi-api.gjsx.uno
+      LETSENCRYPT_EMAIL: admin@gjsx.uno
+      VIRTUAL_PORT: "3000"
+    expose:
+      - "3000"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
